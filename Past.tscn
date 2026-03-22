@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://c1iwqmxmem7bh"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qrdio"]
+
+[node name="Past" type="Node2D" unique_id=1007409069]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=303780469]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="Camera2D" unique_id=989945733]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Camera2D/CharacterBody2D" unique_id=1549347929]
+shape = SubResource("CapsuleShape2D_qrdio")

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://btsfldvlv4elf"]
+
+[node name="TitleScreen" type="Node2D" unique_id=1129048846]
+
+[node name="TitleScreenCamera" type="Camera2D" parent="." unique_id=1264260983]
+anchor_mode = 0
+
+[node name="TutorialButton" type="Button" parent="TitleScreenCamera" unique_id=1640947429]
+offset_left = 635.0
+offset_top = 425.0
+offset_right = 1285.0
+offset_bottom = 625.0
+theme_override_font_sizes/font_size = 40
+text = "How To Play"
+
+[node name="PlayButton" type="Button" parent="TitleScreenCamera" unique_id=478950495]
+offset_left = 635.0
+offset_top = 100.0
+offset_right = 1285.0
+offset_bottom = 300.0
+theme_override_font_sizes/font_size = 40
+text = "Play"
+
+[node name="Quit Button" type="Button" parent="TitleScreenCamera" unique_id=727559595]
+offset_left = 635.0
+offset_top = 750.0
+offset_right = 1285.0
+offset_bottom = 950.0
+theme_override_font_sizes/font_size = 40
+text = "Quit"

@@ -13,7 +13,6 @@ config_version=5
 config/name="GodotButtons001"
 run/main_scene="uid://btsfldvlv4elf"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
-config/icon="res://Sprites/icon.svg"
 
 [display]
 
@@ -38,4 +37,5 @@ MainButton={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"

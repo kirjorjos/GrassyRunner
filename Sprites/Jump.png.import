@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dtx01jganfw2p"
-path="res://.godot/imported/YellowButtonSheet.png-a7c772e13051d1e10c89f4d1ff273899.ctex"
+uid="uid://cpt2vit3k2bdo"
+path="res://.godot/imported/Jump.png-26a773db6f7f81f46d97a5114926bd2a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/YellowButtonSheet.png"
-dest_files=["res://.godot/imported/YellowButtonSheet.png-a7c772e13051d1e10c89f4d1ff273899.ctex"]
+source_file="res://Sprites/Jump.png"
+dest_files=["res://.godot/imported/Jump.png-26a773db6f7f81f46d97a5114926bd2a.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm6shlddr6ipj"
-path="res://.godot/imported/BlueButtonSheet.png-50cb3701c37be3a9c06ccb6832ff74c8.ctex"
+uid="uid://djaflhnhlc2ej"
+path="res://.godot/imported/Roll.png-f24e607e3a19823ed4883bbae12cbbfa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Sprites/BlueButtonSheet.png"
-dest_files=["res://.godot/imported/BlueButtonSheet.png-50cb3701c37be3a9c06ccb6832ff74c8.ctex"]
+source_file="res://Sprites/Roll.png"
+dest_files=["res://.godot/imported/Roll.png-f24e607e3a19823ed4883bbae12cbbfa.ctex"]
 
 [params]
 
