@@ -1,8 +1,7 @@
 using Godot;
 using System;
 
-public partial class GlobalEvents : Node
-{
+public partial class GlobalEvents : Node {
 	private static int MinPlatformHeight = 2;
 	private static int MaxPlatformHeight = 6;
 	private static int MinPlatformWidth = 10;
@@ -21,6 +20,9 @@ public partial class GlobalEvents : Node
 	private SceneTreeTimer cycleTimeTimer;
 	private static Random rng = new Random();
 	private const double cycleTimeChargeTime = 1.0;
+	private static int nextSpawnX = 0;
+	private static int lastY = 0;
+	private static int lastCleanupX = -100;
 
 	public enum Actions {
 		cycleTime,
@@ -96,11 +98,39 @@ public partial class GlobalEvents : Node
 		} else if (isGrounded) {
 			animation.Play("Run");
 		}
-		Vector2 motion = new Vector2((float)runSpeed * (float)delta, (float)yVelocity * (float)delta);
+		float horizontalMotion = (float)runSpeed * (float)delta;
+		Transform2D testTransform = new Transform2D(0, player.GlobalPosition);
+		if (player.TestMove(player.GlobalTransform, new Vector2(1, 0))) {
+			horizontalMotion = 0;
+			GD.Print("wall hit");
+		}
+
+		Vector2 motion = new Vector2(horizontalMotion, (float)yVelocity * (float)delta);
 
 		foreach (Node child in currentWorld.GetChildren()) {
 			if (child is TileMapLayer layer) {
 				layer.Position -= motion;
+			}
+		}
+
+		// Platform Generation
+		if (currentWorld is TimeWorld timeWorld) {
+			Vector2I playerTilePos = timeWorld.tileMap.LocalToMap(timeWorld.tileMap.ToLocal(player.GlobalPosition));
+			if (playerTilePos.X + 15 > nextSpawnX) {
+				int gap = rng.Next(3, 7);
+				int yShift = rng.Next(-2, 3);
+				MakeMetaTile(new Vector2I(nextSpawnX + gap, lastY + yShift), timeWorld);
+			}
+
+			// Platform Cleanup
+			int cleanupThreshold = playerTilePos.X - 10;
+			if (cleanupThreshold > lastCleanupX) {
+				for (int x = lastCleanupX; x < cleanupThreshold; x++) {
+					for (int y = -20; y < 20; y++) {
+						timeWorld.tileMap.SetCell(new Vector2I(x, y), -1);
+					}
+				}
+				lastCleanupX = cleanupThreshold;
 			}
 		}
 	}
@@ -117,7 +147,7 @@ public partial class GlobalEvents : Node
 				break;
 			case Actions.jump:
 				if (isGrounded) {
-					yVelocity = -600.0;
+					yVelocity = -120.0;
 				}
 				break;
 			case Actions.roll:
@@ -193,5 +223,5 @@ public partial class GlobalEvents : Node
 
 		return new Vector2I(width, height);
 	}
-	}
+}
 
