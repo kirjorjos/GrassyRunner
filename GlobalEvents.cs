@@ -5,14 +5,19 @@ public partial class GlobalEvents : Node
 {
 	private static int MinPlatformHeight = 2;
 	private static int MaxPlatformHeight = 6;
-	private static int MinPlatformWidth = 2;
-	private static int MaxPlatformWidth = 15;
+	private static int MinPlatformWidth = 10;
+	private static int MaxPlatformWidth = 25;
 	private bool isActionHeld;
 	private bool isDoubleTapping;
 	private double lastTapTime;
 	private SceneTreeTimer clickTimer;
 	private Actions lastAction;
 	public static Node2D currentWorld;
+	public static double runSpeed = 1000.0;
+	private double yVelocity = 0.0;
+	private const double gravity = 1200.0;
+	private bool isRolling = false;
+	private static Random rng = new Random();
 
 	public enum Actions {
 		cycleTime,
@@ -48,31 +53,60 @@ public partial class GlobalEvents : Node
 	}
 
 	public override void _Process(double delta) {
+		if (currentWorld == null) return;
+
 		if (isActionHeld) {
 			TickLoop(isDoubleTapping ? Actions.roll : Actions.jump);
 		} else {
 			TickLoop(Actions.clear);
 		}
+
+		CharacterBody2D player = currentWorld.GetNode<CharacterBody2D>("Player");
+		AnimatedSprite2D animation = player.GetNode<AnimatedSprite2D>("PlayerSprite");
+		
+		bool isGrounded = player.TestMove(player.GlobalTransform, new Vector2(0, 1));
+		if (!isGrounded) {
+			yVelocity += gravity * delta;
+		} else if (yVelocity > 0) {
+			yVelocity = 0;
+		}
+
+		animation.Play("Run");
+
+		Vector2 motion = new Vector2((float)runSpeed * (float)delta, (float)yVelocity * (float)delta);
+
+		foreach (Node child in currentWorld.GetChildren()) {
+			if (child is TileMapLayer layer) {
+				layer.Position -= motion;
+			}
+		}
 	}
 
 	private void TickLoop(Actions currentAction) {
-		// switch(currentAction) {
-		// 	case Actions.cycleTime:
-		// 		if (lastAction != currentAction) GD.Print("Time cycle called");
-		// 		break;
-		// 	case Actions.jump:
-		// 		label.Text = "Jump held";
-		// 		if (lastAction != currentAction) GD.Print("Jump called");
-		// 		break;
-		// 	case Actions.roll:
-		// 		label.Text = "Roll held";
-		// 		if (lastAction != currentAction) GD.Print("Roll called");
-		// 		break;
-		// 	case Actions.clear:
-		// 		label.Text = "Nothing held";
-		// 		if (lastAction != currentAction) GD.Print("Nothing called");
-		// 		break;
-		// }
+		CharacterBody2D player = currentWorld.GetNode<CharacterBody2D>("Player");
+		CollisionShape2D collision = player.GetNode<CollisionShape2D>("PlayerCollision");
+
+		bool isGrounded = player.TestMove(player.GlobalTransform, new Vector2(0, 1));
+
+		switch(currentAction) {
+			case Actions.jump:
+				if (lastAction != Actions.jump && isGrounded) {
+					yVelocity = -600.0;
+				}
+				break;
+			case Actions.roll:
+				if (!isRolling) {
+					isRolling = true;
+					collision.Scale = new Vector2(1, 0.5f);
+				}
+				break;
+			case Actions.clear:
+				if (isRolling) {
+					isRolling = false;
+					collision.Scale = new Vector2(1, 1.0f);
+				}
+				break;
+		}
 		lastAction = currentAction;
 	}
 
@@ -80,13 +114,12 @@ public partial class GlobalEvents : Node
 	public static Vector2I MakeMetaTile(Vector2I topLeftPos, TimeWorld world) {
 		TileMapLayer tileMap = world.tileMap;
 
-		Random rng = new();
-
 		int width = rng.Next(MinPlatformWidth, MaxPlatformWidth);
 		int height = rng.Next(MinPlatformHeight, MaxPlatformHeight);
 		int sourceId = 0;
 
 		var palette = world.Palette;
+		GD.Print($"Generating platform at {topLeftPos} (Width: {width})");
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {

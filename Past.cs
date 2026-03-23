@@ -27,7 +27,7 @@ public partial class Past : Node2D, TimeWorld {
 		GlobalEvents.currentWorld = this;
 		tileMap = GetNodeOrNull<TileMapLayer>("Layer0");
 
-		CharacterBody2D player = GetNodeOrNull<CharacterBody2D>("CharacterBody2D");
+		CharacterBody2D player = GetNodeOrNull<CharacterBody2D>("Player");
 		if (player != null && tileMap != null) {
 			Vector2I playerTilePos = tileMap.LocalToMap(tileMap.ToLocal(player.GlobalPosition));
 			
