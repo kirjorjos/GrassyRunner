@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://btsfldvlv4elf"]
 
-[ext_resource type="Script" uid="uid://i7hh2aajhaoa" path="res://PlayButton.cs" id="1_c0dwi"]
-[ext_resource type="Script" path="res://QuitButton.cs" id="2_eaw4b"]
+[ext_resource type="Script" uid="uid://bv7ejw0v4gq1t" path="res://PlayButton.cs" id="1_c0dwi"]
+[ext_resource type="Script" uid="uid://45veuvlhrt4e" path="res://QuitButton.cs" id="2_eaw4b"]
+[ext_resource type="Script" uid="uid://cjc1dxtynn5vh" path="res://TutorialButton.cs" id="2_quvj1"]
 
 [node name="Control" type="Control" unique_id=2013784710]
 layout_mode = 3
@@ -42,6 +43,7 @@ custom_minimum_size = Vector2(400, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "How To Play"
+script = ExtResource("2_quvj1")
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1689698181]
 custom_minimum_size = Vector2(400, 120)
@@ -51,4 +53,5 @@ text = "Quit"
 script = ExtResource("2_eaw4b")
 
 [connection signal="pressed" from="CenterContainer/VBoxContainer/PlayButton" to="CenterContainer/VBoxContainer/PlayButton" method="OnPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/TutorialButton" to="CenterContainer/VBoxContainer/TutorialButton" method="OnPressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/QuitButton" to="CenterContainer/VBoxContainer/QuitButton" method="OnPressed"]
