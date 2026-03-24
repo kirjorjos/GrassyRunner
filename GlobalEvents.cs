@@ -16,6 +16,7 @@ public partial class GlobalEvents : Node {
 	private double yVelocity = 0.0;
 	private bool isRolling = false;
 	private bool isMovementPaused = false;
+	private bool ignoreNextMainButtonRelease = false;
 	private static Random rng = new Random();
 	private static int nextSpawnX = 0;
 	private static int lastY = 0;
@@ -41,8 +42,11 @@ public struct SceneryItem {
 
 	public override void _Input(InputEvent @event) {
 		if (currentWorld == null || isMovementPaused) return;
+		if (!@event.IsAction("MainButton")) return;
 
 		if (@event.IsActionPressed("MainButton")) {
+			ignoreNextMainButtonRelease = false;
+
 			CharacterBody2D player = currentWorld.GetNode<CharacterBody2D>("Player");
 			bool isGrounded = player.TestMove(player.GlobalTransform, new Vector2(0, 1));
 
@@ -53,6 +57,13 @@ public struct SceneryItem {
 				isRolling = true;
 			}
 		} else if (@event.IsActionReleased("MainButton")) {
+			if (ignoreNextMainButtonRelease) {
+				ignoreNextMainButtonRelease = false;
+				isActionHeld = false;
+				isRolling = false;
+				return;
+			}
+
 			if (!isRolling) {
 				TickLoop(Actions.jump);
 			}
@@ -91,9 +102,6 @@ public struct SceneryItem {
 		}
 		Vector2 desiredMovement = new Vector2((float)runSpeed * (float)delta, (float)yVelocity * (float)delta);
 		Vector2 resolvedMovement = ResolveMovement(player, desiredMovement);
-		if (resolvedMovement.X < desiredMovement.X) {
-			GD.Print("wall hit");
-		}
 		if (resolvedMovement.Y != desiredMovement.Y) {
 			yVelocity = 0;
 		}
@@ -174,7 +182,6 @@ public struct SceneryItem {
 
 		var palette = world.Palette;
 		topLeftPos = FindOpenPlatformPosition(topLeftPos, width, height, tileMap);
-		GD.Print($"Generating platform at {topLeftPos} (Width: {width})");
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -291,6 +298,14 @@ public struct SceneryItem {
 		lastY = 0;
 		lastCleanupX = -100;
 		lowestPlatformY = int.MinValue;
+	}
+
+	public void HandleStateReset() {
+		isActionHeld = false;
+		isRolling = false;
+		yVelocity = 0;
+		isMovementPaused = false;
+		ignoreNextMainButtonRelease = Input.IsActionPressed("MainButton");
 	}
 
 	public void ResumeMovement() {

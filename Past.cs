@@ -3,11 +3,17 @@ using System;
 using System.Collections.Generic;
 
 public partial class Past : Node2D {
+	private enum GameState {
+		Playing,
+		GameOver
+	}
+
 	public TileMapLayer tileMap { get; private set; }
 	private CharacterBody2D player;
 	private Control controlOverlay;
 	private Label scoreNode;
 	private int score = 0;
+	private GameState state = GameState.Playing;
 	public Dictionary<string, Vector2I[]> Palette { get; } = new Dictionary<string, Vector2I[]>() {
 		{ "topLeft", new[] { new Vector2I(8, 0), new Vector2I(0, 3) } },
 		{ "topRight", new[] { new Vector2I(11, 0), new Vector2I(7, 3) } },
@@ -37,6 +43,12 @@ public partial class Past : Node2D {
 		TriggerPlatformInitialization();
 	}
 
+	public override void _Process(double delta) {
+		if (state == GameState.GameOver && Input.IsActionJustPressed("MainButton")) {
+			OnRestartButtonPressed();
+		}
+	}
+
 	public void TickLoop(bool isRolling) {
 		score++;
 		if (isRolling) score++; // double score when rolling
@@ -44,18 +56,16 @@ public partial class Past : Node2D {
 	}
 
 	public void ShowControlOverlay() {
-		if (controlOverlay != null) {
-			controlOverlay.Visible = true;
-		}
+		controlOverlay.Visible = true;
+		state = GameState.GameOver;
 	}
 
 	public void HideControlOverlay() {
-		if (controlOverlay != null) {
-			controlOverlay.Visible = false;
-		}
+		controlOverlay.Visible = false;
 	}
 
 	public void OnMainMenuButtonPressed() {
+		GlobalEvents.currentWorld = null;
 		GetTree().ChangeSceneToFile("res://Title.tscn");
 	}
 
@@ -69,7 +79,8 @@ public partial class Past : Node2D {
 		TriggerPlatformInitialization();
 
 		GlobalEvents globalEvents = GetNodeOrNull<GlobalEvents>("/root/GlobalEvents");
-		globalEvents.ResumeMovement();
+		globalEvents.HandleStateReset();
+		state = GameState.Playing;
 	}
 
 	private void TriggerPlatformInitialization() {

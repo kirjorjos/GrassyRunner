@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://btsfldvlv4elf"]
 
 [ext_resource type="Script" uid="uid://bv7ejw0v4gq1t" path="res://PlayButton.cs" id="1_c0dwi"]
+[ext_resource type="Script" path="res://TitleScreen.cs" id="1_fhjqf"]
 [ext_resource type="Script" uid="uid://45veuvlhrt4e" path="res://QuitButton.cs" id="2_eaw4b"]
 [ext_resource type="Script" uid="uid://cjc1dxtynn5vh" path="res://TutorialButton.cs" id="2_quvj1"]
 
@@ -11,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_fhjqf")
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=175017455]
 layout_mode = 1
