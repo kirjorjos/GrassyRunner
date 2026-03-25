@@ -118,7 +118,7 @@ public struct SceneryItem {
 			if (playerTilePos.Y > lowestPlatformY + MaxPlatformHeight+2) {
 				PauseMovement();
 				if (currentWorld is Past pastWorld) {
-					pastWorld.ShowControlOverlay();
+					pastWorld.ShowGameOverScreen();
 				}
 				return;
 			}

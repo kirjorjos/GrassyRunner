@@ -12,6 +12,8 @@ public partial class Past : Node2D {
 	private CharacterBody2D player;
 	private Control controlOverlay;
 	private Label scoreNode;
+	private AudioStreamPlayer backgroundMusicPlayer;
+	private AudioStreamPlayer deathPlayer;
 	private int score = 0;
 	private GameState state = GameState.Playing;
 	public Dictionary<string, Vector2I[]> Palette { get; } = new Dictionary<string, Vector2I[]>() {
@@ -39,6 +41,8 @@ public partial class Past : Node2D {
 		player = GetNode<CharacterBody2D>("Player");
 		controlOverlay = GetNode<Control>("CanvasLayer/Control/VBoxContainer");
 		scoreNode = GetNode<Label>("CanvasLayer/Control/Score");
+		backgroundMusicPlayer = GetNode<AudioStreamPlayer>("BackgroundMusicPlayer");
+		deathPlayer = GetNode<AudioStreamPlayer>("DeathPlayer");
 
 		TriggerPlatformInitialization();
 	}
@@ -46,6 +50,10 @@ public partial class Past : Node2D {
 	public override void _Process(double delta) {
 		if (state == GameState.GameOver && Input.IsActionJustPressed("MainButton")) {
 			OnRestartButtonPressed();
+		}
+		GD.Print($"Gamestate: {state}, background music playing: {backgroundMusicPlayer.Playing}, playback pos: ${backgroundMusicPlayer.GetPlaybackPosition()}");
+		if (state == GameState.Playing && !backgroundMusicPlayer.Playing) {
+			backgroundMusicPlayer.Play();
 		}
 	}
 
@@ -55,9 +63,15 @@ public partial class Past : Node2D {
 		scoreNode.Text = $"{score}";
 	}
 
-	public void ShowControlOverlay() {
+	public void ShowGameOverScreen() {
+		if (state == GameState.GameOver) {
+			return;
+		}
+
 		controlOverlay.Visible = true;
 		state = GameState.GameOver;
+		backgroundMusicPlayer.Stop();
+		deathPlayer.Play();
 	}
 
 	public void HideControlOverlay() {
@@ -77,6 +91,7 @@ public partial class Past : Node2D {
 		GlobalEvents.ResetPlatformGeneration();
 		HideControlOverlay();
 		TriggerPlatformInitialization();
+		PlayBackgroundMusic();
 
 		GlobalEvents globalEvents = GetNodeOrNull<GlobalEvents>("/root/GlobalEvents");
 		globalEvents.HandleStateReset();
@@ -93,5 +108,12 @@ public partial class Past : Node2D {
 			
 			GlobalEvents.MakeMetaTile(new Vector2I(startX, startY), this);
 		}
+	}
+
+	private void PlayBackgroundMusic() {
+		if (deathPlayer.Playing) {
+			deathPlayer.Stop();
+		}
+		backgroundMusicPlayer.Play();
 	}
 }
